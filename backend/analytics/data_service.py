@@ -1,15 +1,10 @@
-import os
 import pandas as pd
-
-
-DATA_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "../../data/processed/sample_air_quality.csv"
-)
+from app.utils import get_dataset_path
 
 
 def load_dataset():
-    return pd.read_csv(DATA_PATH)
+    dataset_path = get_dataset_path()
+    return pd.read_csv(dataset_path)
 
 
 def get_available_cities():

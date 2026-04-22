@@ -8,6 +8,7 @@ from analytics.data_service import (
     get_latest_by_city
 )
 from models.prediction_service import predict_next_value
+from app.utils import get_dataset_path
 
 api_bp = Blueprint("api", __name__)
 
@@ -119,3 +120,10 @@ def predict():
         return jsonify(result), 404
 
     return jsonify(result)
+
+
+@api_bp.route("/api/dataset/info", methods=["GET"])
+def dataset_info():
+    return jsonify({
+        "dataset_path": get_dataset_path()
+    })

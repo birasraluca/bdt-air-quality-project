@@ -41,6 +41,10 @@ venv/Scripts/Activate
 
 pip install -r backend/requirements.txt
 
+### 4. .env setup
+
+copy .env.example .env
+
 ## API Endpoints
 
 ### Health and general
