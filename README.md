@@ -79,8 +79,16 @@ pip install -r backend/requirements.txt
   - Predicts the next pollutant value for a selected city and parameter.
 
 #### Example request body
-```json
 {
   "city": "Timisoara",
   "parameter": "pm25"
+}
+
+#### Example response
+{
+  "based_on_records": 5,
+  "city": "Timisoara",
+  "parameter": "pm25",
+  "predicted_date": "2024-01-06",
+  "predicted_value": 14.8
 }
