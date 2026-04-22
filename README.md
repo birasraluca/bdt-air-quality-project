@@ -17,33 +17,6 @@ This project analyzes large-scale urban air quality data and applies descriptive
 - scikit-learn
 - Flask
 
-## Repository Structure
-
-bdt-air-quality-project/
-│
-├── backend/                 # Backend services (Flask API, data processing, ML)
-│   ├── app/                 # Flask app (routes, API endpoints)
-│   ├── ingestion/           # Data collection (OpenAQ API, downloads)
-│   ├── processing/          # Data cleaning and transformation (PySpark)
-│   ├── analytics/           # Descriptive analytics (statistics, aggregations)
-│   ├── models/              # Predictive models (scikit-learn)
-│   ├── tests/               # Backend tests
-│   ├── requirements.txt     # Python dependencies for backend
-│   └── run.py               # Entry point for running the backend server
-│
-├── frontend/                # Frontend application (React / Streamlit / other)
-│
-├── data/                    # Dataset storage
-│   ├── raw/                 # Raw, unprocessed data
-│   └── processed/           # Cleaned and transformed data
-│
-├── notebooks/               # Jupyter notebooks (exploration, experiments)
-│
-├── docs/                    # Documentation (reports, diagrams, slides)
-│
-├── README.md                # Project overview and setup instructions
-└── .gitignore               # Ignored files (venv, cache, etc.)
-
 ## Workflow
 - Data ingestion
 - Data cleaning
@@ -70,10 +43,44 @@ pip install -r backend/requirements.txt
 
 ## API Endpoints
 
-- GET /api/summary
-- GET /api/cities
-- GET /api/parameters
-- GET /api/pollution?city=...&parameter=...
-- GET /api/summary/by-city?parameter=...
-- GET /api/pollution/latest?parameter=...
-- POST /api/predict
+### Health and general
+- `GET /`
+  - Returns a basic backend status message.
+
+- `GET /health`
+  - Returns a simple health check response.
+
+### Metadata
+- `GET /api/cities`
+  - Returns the list of available cities.
+
+- `GET /api/parameters`
+  - Returns the list of available pollutant parameters.
+
+### Descriptive analytics
+- `GET /api/summary`
+  - Returns overall dataset summary:
+    - total records
+    - number of cities
+    - pollutants
+    - date range
+
+- `GET /api/pollution?city=<city>&parameter=<parameter>`
+  - Returns time-series pollution data for a selected city and pollutant.
+
+- `GET /api/summary/by-city?parameter=<parameter>`
+  - Returns average pollutant value by city for a selected parameter.
+
+- `GET /api/pollution/latest?parameter=<parameter>`
+  - Returns the latest available pollutant value for each city.
+
+### Predictive analytics
+- `POST /api/predict`
+  - Predicts the next pollutant value for a selected city and parameter.
+
+#### Example request body
+```json
+{
+  "city": "Timisoara",
+  "parameter": "pm25"
+}
