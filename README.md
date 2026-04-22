@@ -67,3 +67,13 @@ venv/Scripts/Activate
 ### 3. Install requirements
 
 pip install -r backend/requirements.txt
+
+## API Endpoints
+
+- GET /api/summary
+- GET /api/cities
+- GET /api/parameters
+- GET /api/pollution?city=...&parameter=...
+- GET /api/summary/by-city?parameter=...
+- GET /api/pollution/latest?parameter=...
+- POST /api/predict
