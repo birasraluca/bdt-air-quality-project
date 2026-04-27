@@ -96,3 +96,15 @@ copy .env.example .env
   "predicted_date": "2024-01-06",
   "predicted_value": 14.8
 }
+
+## Data Pipeline
+
+The project contains two processing options:
+
+### Pandas processing
+
+```bash
+python backend/ingestion/load_sample_data.py
+python backend/processing/clean_air_quality_data.py
+
+On Windows, PySpark may require winutils.exe and HADOOP_HOME to be configured.
