@@ -211,4 +211,5 @@ __pycache__/
 *.pyc
 .env
 
-.csv
+data/raw/*.csv
+data/processed/*.csv
