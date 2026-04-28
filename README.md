@@ -104,8 +104,13 @@ The project contains two processing options:
 
 ### Pandas processing
 
-```bash
 python backend/ingestion/load_sample_data.py
 python backend/processing/clean_air_quality_data.py
 
 On Windows, PySpark may require winutils.exe and HADOOP_HOME to be configured.
+
+## Running the Data Pipeline
+
+The full local data pipeline can be executed with:
+
+python backend/run_pipeline.py
