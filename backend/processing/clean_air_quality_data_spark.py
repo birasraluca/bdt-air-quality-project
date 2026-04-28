@@ -10,7 +10,7 @@ from pyspark.sql.functions import col, lower, trim, to_date
 def main():
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
-    input_path = os.path.join(project_root, "data", "raw", "ingested_air_quality.csv")
+    input_path = os.path.join(project_root, "data", "raw", "openaq_measurements.csv")
     output_dir = os.path.join(project_root, "data", "processed", "spark_output")
     final_output_path = os.path.join(project_root, "data", "processed", "sample_air_quality.csv")
 
