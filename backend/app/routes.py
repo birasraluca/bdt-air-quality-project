@@ -10,6 +10,7 @@ from analytics.data_service import (
 )
 from models.prediction_service import predict_next_value
 from app.utils import get_dataset_path
+from models.model_info_service import get_model_info
 
 api_bp = Blueprint("api", __name__)
 
@@ -146,3 +147,8 @@ def trend():
         return jsonify(result), 404
 
     return jsonify(result)
+
+
+@api_bp.route("/api/model/info", methods=["GET"])
+def model_info():
+    return jsonify(get_model_info())

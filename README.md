@@ -78,6 +78,9 @@ copy .env.example .env
 - `GET /api/pollution/latest?parameter=<parameter>`
   - Returns the latest available pollutant value for each city.
 
+- `GET /api/model/info`
+  - Returns information about the predictive model used by the backend.
+
 ### Predictive analytics
 - `POST /api/predict`
   - Predicts the next pollutant value for a selected city and parameter.
