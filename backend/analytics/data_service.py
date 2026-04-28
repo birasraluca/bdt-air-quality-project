@@ -109,3 +109,52 @@ def get_latest_by_city(parameter: str):
         "parameter": parameter,
         "latest": latest
     }
+
+
+def get_pollution_trend(city: str, parameter: str):
+    df = load_dataset()
+
+    filtered_df = df[
+        (df["city"].str.lower() == city.lower()) &
+        (df["parameter"].str.lower() == parameter.lower())
+    ].copy()
+
+    if filtered_df.empty:
+        return {
+            "error": f"No data found for city='{city}' and parameter='{parameter}'"
+        }
+
+    filtered_df["date"] = pd.to_datetime(filtered_df["date"])
+    filtered_df = filtered_df.sort_values("date")
+
+    first_row = filtered_df.iloc[0]
+    last_row = filtered_df.iloc[-1]
+
+    first_value = float(first_row["value"])
+    latest_value = float(last_row["value"])
+
+    absolute_change = latest_value - first_value
+
+    if first_value != 0:
+        percentage_change = (absolute_change / first_value) * 100
+    else:
+        percentage_change = None
+
+    if absolute_change > 0:
+        direction = "increasing"
+    elif absolute_change < 0:
+        direction = "decreasing"
+    else:
+        direction = "stable"
+
+    return {
+        "city": city,
+        "parameter": parameter,
+        "from_date": first_row["date"].strftime("%Y-%m-%d"),
+        "to_date": last_row["date"].strftime("%Y-%m-%d"),
+        "first_value": round(first_value, 2),
+        "latest_value": round(latest_value, 2),
+        "absolute_change": round(absolute_change, 2),
+        "percentage_change": round(percentage_change, 2) if percentage_change is not None else None,
+        "direction": direction
+    }

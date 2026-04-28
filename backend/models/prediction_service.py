@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 from analytics.data_service import load_dataset
 
 
@@ -16,9 +17,9 @@ def predict_next_value(city: str, parameter: str):
             "error": f"No data found for city='{city}' and parameter='{parameter}'"
         }
 
-    if len(filtered_df) < 2:
+    if len(filtered_df) < 3:
         return {
-            "error": "Not enough data points to build a prediction"
+            "error": "Not enough data points to build and evaluate a prediction model"
         }
 
     filtered_df["date"] = pd.to_datetime(filtered_df["date"])
@@ -32,6 +33,11 @@ def predict_next_value(city: str, parameter: str):
     model = LinearRegression()
     model.fit(X, y)
 
+    predictions = model.predict(X)
+
+    mae = mean_absolute_error(y, predictions)
+    rmse = mean_squared_error(y, predictions) ** 0.5
+
     next_day_index = pd.DataFrame([[len(filtered_df)]], columns=["day_index"])
     predicted_value = model.predict(next_day_index)[0]
 
@@ -43,5 +49,12 @@ def predict_next_value(city: str, parameter: str):
         "parameter": parameter,
         "predicted_value": round(float(predicted_value), 2),
         "predicted_date": next_date.strftime("%Y-%m-%d"),
-        "based_on_records": int(len(filtered_df))
+        "based_on_records": int(len(filtered_df)),
+        "model": {
+            "type": "Linear Regression",
+            "features": ["day_index"],
+            "target": "value",
+            "mae": round(float(mae), 3),
+            "rmse": round(float(rmse), 3)
+        }
     }

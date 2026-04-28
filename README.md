@@ -81,6 +81,7 @@ copy .env.example .env
 ### Predictive analytics
 - `POST /api/predict`
   - Predicts the next pollutant value for a selected city and parameter.
+  - The prediction endpoint uses a baseline Linear Regression model based on the time index of historical pollutant measurements. The response includes MAE and RMSE evaluation metrics.
 
 #### Example request body
 {

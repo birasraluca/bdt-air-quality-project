@@ -5,7 +5,8 @@ from analytics.data_service import (
     get_available_parameters,
     get_pollution_timeseries,
     get_average_by_city,
-    get_latest_by_city
+    get_latest_by_city,
+    get_pollution_trend
 )
 from models.prediction_service import predict_next_value
 from app.utils import get_dataset_path
@@ -127,3 +128,21 @@ def dataset_info():
     return jsonify({
         "dataset_path": get_dataset_path()
     })
+
+
+@api_bp.route("/api/trend", methods=["GET"])
+def trend():
+    city = request.args.get("city")
+    parameter = request.args.get("parameter")
+
+    if not city or not parameter:
+        return jsonify({
+            "error": "Both 'city' and 'parameter' query parameters are required"
+        }), 400
+
+    result = get_pollution_trend(city, parameter)
+
+    if "error" in result:
+        return jsonify(result), 404
+
+    return jsonify(result)
