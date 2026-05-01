@@ -7,10 +7,14 @@ import {
   getTrend,
   getPrediction,
   getModelInfo,
+  getDescriptiveStatistics,
+  getMonthlyAverage,
 } from "./api";
 import {
   LineChart,
   Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
@@ -34,6 +38,9 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [descriptiveStats, setDescriptiveStats] = useState([]);
+  const [monthlyAverage, setMonthlyAverage] = useState([]);
 
   useEffect(() => {
     async function loadInitialData() {
@@ -85,11 +92,14 @@ function App() {
         setLoading(true);
         setError("");
 
-        const [pollution, trendData, predictionData] = await Promise.all([
-          getPollution(selectedCity, selectedParameter),
-          getTrend(selectedCity, selectedParameter),
-          getPrediction(selectedCity, selectedParameter),
-        ]);
+        const [pollution, trendData, predictionData, statsData, monthlyData] =
+          await Promise.all([
+            getPollution(selectedCity, selectedParameter),
+            getTrend(selectedCity, selectedParameter),
+            getPrediction(selectedCity, selectedParameter),
+            getDescriptiveStatistics(selectedParameter),
+            getMonthlyAverage(selectedCity, selectedParameter),
+          ]);
 
         const normalizedPollutionData = Array.isArray(pollution)
           ? pollution
@@ -98,6 +108,8 @@ function App() {
         setPollutionData(normalizedPollutionData);
         setTrend(trendData);
         setPrediction(predictionData);
+        setDescriptiveStats(statsData.statistics || []);
+        setMonthlyAverage(monthlyData.data || []);
       } catch (err) {
         console.error(err);
         setError("Could not load analytics for the selected city and pollutant.");
@@ -269,22 +281,30 @@ function App() {
                 <p>
                   <strong>MAE:</strong>{" "}
                   {prediction.mae !== undefined
-                    ? Number(prediction.mae).toFixed(2)
-                    : prediction.MAE !== undefined
-                    ? Number(prediction.MAE).toFixed(2)
-                    : prediction.metrics?.mae !== undefined
-                    ? Number(prediction.metrics.mae).toFixed(2)
+                    ? Number(prediction.mae).toFixed(3)
+                    : prediction.model?.mae !== undefined
+                    ? Number(prediction.model.mae).toFixed(3)
                     : "N/A"}
                 </p>
                 <p>
                   <strong>RMSE:</strong>{" "}
                   {prediction.rmse !== undefined
-                    ? Number(prediction.rmse).toFixed(2)
-                    : prediction.RMSE !== undefined
-                    ? Number(prediction.RMSE).toFixed(2)
-                    : prediction.metrics?.rmse !== undefined
-                    ? Number(prediction.metrics.rmse).toFixed(2)
+                    ? Number(prediction.rmse).toFixed(3)
+                    : prediction.model?.rmse !== undefined
+                    ? Number(prediction.model.rmse).toFixed(3)
                     : "N/A"}
+                </p>
+                <p>
+                  <strong>R² Score:</strong>{" "}
+                  {prediction.r2_score !== undefined && prediction.r2_score !== null
+                    ? Number(prediction.r2_score).toFixed(3)
+                    : prediction.model?.r2_score !== undefined && prediction.model?.r2_score !== null
+                    ? Number(prediction.model.r2_score).toFixed(3)
+                    : "N/A"}
+                </p>
+                <p>
+                  <strong>Predicted Date:</strong>{" "}
+                  {prediction.predicted_date || "N/A"}
                 </p>
               </div>
             ) : (
@@ -317,6 +337,80 @@ function App() {
               <p className="empty-state">No model info available.</p>
             )}
           </div>
+        </div>
+      </section>
+      <section className="analytics-section">
+        <div className="panel">
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Descriptive Analytics</p>
+              <h2>
+                Monthly Average for {selectedParameter} in {selectedCity}
+              </h2>
+            </div>
+          </div>
+
+          <div className="chart-wrapper">
+            {monthlyAverage.length > 0 ? (
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={monthlyAverage}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="avg_value" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="empty-state">No monthly average data available.</p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="analytics-section">
+        <div className="panel">
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Descriptive Statistics</p>
+              <h2>City Comparison for {selectedParameter}</h2>
+            </div>
+          </div>
+
+          {descriptiveStats.length > 0 ? (
+            <div className="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>City</th>
+                    <th>Pollutant</th>
+                    <th>Records</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Mean</th>
+                    <th>Median</th>
+                    <th>Std</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {descriptiveStats.map((row) => (
+                    <tr key={`${row.city}-${row.parameter}`}>
+                      <td>{row.city}</td>
+                      <td>{row.parameter}</td>
+                      <td>{row.records}</td>
+                      <td>{Number(row.min).toFixed(2)}</td>
+                      <td>{Number(row.max).toFixed(2)}</td>
+                      <td>{Number(row.mean).toFixed(2)}</td>
+                      <td>{Number(row.median).toFixed(2)}</td>
+                      <td>{Number(row.std).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="empty-state">No descriptive statistics available.</p>
+          )}
         </div>
       </section>
     </div>

@@ -44,3 +44,27 @@ export async function getModelInfo() {
   const response = await axios.get(`${API_BASE_URL}/api/model/info`);
   return response.data;
 }
+
+export async function getDescriptiveStatistics(parameter = null) {
+  const response = await axios.get(`${API_BASE_URL}/api/descriptive/statistics`, {
+    params: parameter ? { parameter } : {},
+  });
+
+  return response.data;
+}
+
+export async function getCityProfile(city) {
+  const response = await axios.get(`${API_BASE_URL}/api/descriptive/city-profile`, {
+    params: { city },
+  });
+
+  return response.data;
+}
+
+export async function getMonthlyAverage(city, parameter) {
+  const response = await axios.get(`${API_BASE_URL}/api/descriptive/monthly-average`, {
+    params: { city, parameter },
+  });
+
+  return response.data;
+}

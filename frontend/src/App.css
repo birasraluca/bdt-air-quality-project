@@ -215,3 +215,39 @@ select {
     flex-direction: column;
   }
 }
+
+.analytics-section {
+  margin-top: 24px;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th,
+td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #e8eef6;
+}
+
+th {
+  color: #16324f;
+  background: #f7f9fc;
+  font-weight: 800;
+}
+
+td {
+  color: #3c4b5f;
+}
+
+tbody tr:hover {
+  background: #f7f9fc;
+}
