@@ -117,3 +117,12 @@ On Windows, PySpark may require winutils.exe and HADOOP_HOME to be configured.
 The full local data pipeline can be executed with:
 
 python backend/run_pipeline.py
+
+## Running the Frontend
+
+cd frontend
+npm install
+npm run dev
+
+The dashboard will be available at:
+http://localhost:5173

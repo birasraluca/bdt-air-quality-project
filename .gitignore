@@ -216,3 +216,7 @@ data/processed/*.csv
 data/processed/spark_output/
 *.crc
 _SUCCESS
+
+# Frontend dependencies/build
+frontend/node_modules/
+frontend/dist/
