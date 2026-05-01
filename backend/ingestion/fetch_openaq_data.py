@@ -2,6 +2,8 @@ import os
 import requests
 import pandas as pd
 from dotenv import load_dotenv
+import random
+from datetime import datetime, timedelta
 
 
 BASE_URL = "https://api.openaq.org/v3/locations"
@@ -95,21 +97,30 @@ def normalize_results(api_response, parameter_name):
         else:
             city = location_name
 
-        for day in range(1, 31):
-            base_values = {
-                "pm25": 12,
-                "pm10": 25,
-                "no2": 18
-            }
+        start_date = datetime(2024, 1, 1)
 
-            base = base_values.get(parameter_name, 10)
-            value = round(base + day * 0.3, 2)
+        base_values = {
+            "pm25": 12,
+            "pm10": 25,
+            "no2": 18
+        }
+
+        base = base_values.get(parameter_name, 10)
+
+        for day_index in range(90):
+            current_date = start_date + timedelta(days=day_index)
+
+            # Simulate a slow trend + random daily variation
+            trend = day_index * 0.08
+            noise = random.uniform(-2.5, 2.5)
+
+            value = max(0, round(base + trend + noise, 2))
 
             rows.append({
                 "city": city,
                 "parameter": parameter_name,
                 "value": value,
-                "date": f"2024-01-{day:02d}",
+                "date": current_date.strftime("%Y-%m-%d"),
                 "unit": "µg/m³",
                 "source": "OpenAQ",
                 "latitude": latitude,
