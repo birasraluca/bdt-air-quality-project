@@ -164,7 +164,7 @@ function App() {
       <section className="cards">
         <div className="card">
           <p className="card-label">Total Records</p>
-          <h2>{summary?.records ?? "—"}</h2>
+          <h2>{summary?.total_records ?? "—"}</h2>
         </div>
 
         <div className="card">
@@ -300,7 +300,7 @@ function App() {
               <div className="metric-list">
                 <p>
                   <strong>Model:</strong>{" "}
-                  {modelInfo.model || modelInfo.model_type || "Linear Regression"}
+                  {modelInfo.model_name || modelInfo.model || modelInfo.model_type || "Linear Regression"}
                 </p>
                 <p>
                   <strong>Target:</strong>{" "}
@@ -310,7 +310,7 @@ function App() {
                   <strong>Features:</strong>{" "}
                   {Array.isArray(modelInfo.features)
                     ? modelInfo.features.join(", ")
-                    : modelInfo.features || "Time index"}
+                    : modelInfo.features || "day_index"}
                 </p>
               </div>
             ) : (

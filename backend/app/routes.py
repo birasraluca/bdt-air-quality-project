@@ -6,7 +6,10 @@ from analytics.data_service import (
     get_pollution_timeseries,
     get_average_by_city,
     get_latest_by_city,
-    get_pollution_trend
+    get_pollution_trend,
+    get_descriptive_statistics,
+    get_city_profile,
+    get_monthly_average,
 )
 from models.prediction_service import predict_next_value
 from app.utils import get_dataset_path
@@ -152,3 +155,45 @@ def trend():
 @api_bp.route("/api/model/info", methods=["GET"])
 def model_info():
     return jsonify(get_model_info())
+
+
+@api_bp.route("/api/descriptive/statistics", methods=["GET"])
+def descriptive_statistics():
+    parameter = request.args.get("parameter")
+
+    result = get_descriptive_statistics(parameter)
+
+    if "error" in result:
+        return jsonify(result), 404
+
+    return jsonify(result)
+
+
+@api_bp.route("/api/descriptive/city-profile", methods=["GET"])
+def city_profile():
+    city = request.args.get("city")
+
+    if not city:
+        return jsonify({
+            "error": "'city' query parameter is required"
+        }), 400
+
+    result = get_city_profile(city)
+
+    if "error" in result:
+        return jsonify(result), 404
+
+    return jsonify(result)
+
+
+@api_bp.route("/api/descriptive/monthly-average", methods=["GET"])
+def monthly_average():
+    city = request.args.get("city")
+    parameter = request.args.get("parameter")
+
+    result = get_monthly_average(city, parameter)
+
+    if "error" in result:
+        return jsonify(result), 404
+
+    return jsonify(result)
