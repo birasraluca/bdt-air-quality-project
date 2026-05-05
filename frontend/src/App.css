@@ -251,3 +251,44 @@ td {
 tbody tr:hover {
   background: #f7f9fc;
 }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.quality-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.quality-item {
+  background: #f7f9fc;
+  border: 1px solid #e8eef6;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quality-item span {
+  color: #65758b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.quality-item strong {
+  color: #16324f;
+  font-size: 16px;
+  word-break: break-word;
+}
+
+@media (max-width: 900px) {
+  .quality-grid {
+    grid-template-columns: 1fr;
+  }
+}

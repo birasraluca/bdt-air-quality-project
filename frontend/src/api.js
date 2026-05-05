@@ -76,3 +76,13 @@ export async function getAlerts(city, parameter) {
 
   return response.data;
 }
+
+export async function getDataQuality() {
+  const response = await axios.get(`${API_BASE_URL}/api/data-quality`);
+  return response.data;
+}
+
+export async function getLatestPipelineRun() {
+  const response = await axios.get(`${API_BASE_URL}/api/pipeline/latest`);
+  return response.data;
+}

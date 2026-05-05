@@ -10,6 +10,8 @@ import {
   getDescriptiveStatistics,
   getMonthlyAverage,
   getAlerts,
+  getDataQuality,
+  getLatestPipelineRun,
 } from "./api";
 import {
   LineChart,
@@ -45,18 +47,29 @@ function App() {
 
   const [alerts, setAlerts] = useState(null);
 
+  const [dataQuality, setDataQuality] = useState(null);
+  const [pipelineRun, setPipelineRun] = useState(null);
+
   useEffect(() => {
     async function loadInitialData() {
       try {
         setError("");
 
-        const [summaryData, citiesData, parametersData, modelData] =
-          await Promise.all([
-            getSummary(),
-            getCities(),
-            getParameters(),
-            getModelInfo(),
-          ]);
+        const [
+          summaryData,
+          citiesData,
+          parametersData,
+          modelData,
+          dataQualityData,
+          pipelineRunData,
+        ] = await Promise.all([
+          getSummary(),
+          getCities(),
+          getParameters(),
+          getModelInfo(),
+          getDataQuality(),
+          getLatestPipelineRun(),
+        ]);
 
         const normalizedCities = Array.isArray(citiesData)
           ? citiesData
@@ -70,6 +83,8 @@ function App() {
         setCities(normalizedCities);
         setParameters(normalizedParameters);
         setModelInfo(modelData);
+        setDataQuality(dataQualityData);
+        setPipelineRun(pipelineRunData);
 
         if (normalizedCities.length > 0) {
           setSelectedCity(normalizedCities[0]);
@@ -205,6 +220,23 @@ function App() {
           <h2>
             {latestValue !== null && latestValue !== undefined
               ? Number(latestValue).toFixed(2)
+              : "—"}
+          </h2>
+        </div>
+        <div className="card">
+          <p className="card-label">Data Quality</p>
+          <h2>
+            {dataQuality
+              ? `${dataQuality.duplicate_rows ?? 0} dup`
+              : "—"}
+          </h2>
+        </div>
+
+        <div className="card">
+          <p className="card-label">Pipeline Status</p>
+          <h2>
+            {pipelineRun?.status
+              ? pipelineRun.status
               : "—"}
           </h2>
         </div>
@@ -399,6 +431,118 @@ function App() {
               <p className="empty-state">No model info available.</p>
             )}
           </div>
+        </div>
+      </section>
+      <section className="analytics-section">
+        <div className="panel">
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Data Clean-up</p>
+              <h2>Data Quality Report</h2>
+            </div>
+          </div>
+
+          {dataQuality ? (
+            <div className="quality-grid">
+              <div className="quality-item">
+                <span>Total Rows</span>
+                <strong>{dataQuality.total_rows ?? "N/A"}</strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Duplicate Rows</span>
+                <strong>{dataQuality.duplicate_rows ?? "N/A"}</strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Invalid Values</span>
+                <strong>{dataQuality.invalid_values ?? "N/A"}</strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Available Pollutants</span>
+                <strong>
+                  {Array.isArray(dataQuality.available_parameters)
+                    ? dataQuality.available_parameters.join(", ")
+                    : "N/A"}
+                </strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Date Range</span>
+                <strong>
+                  {dataQuality.date_range
+                    ? `${dataQuality.date_range.min} → ${dataQuality.date_range.max}`
+                    : "N/A"}
+                </strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Missing Expected Pollutants</span>
+                <strong>
+                  {Array.isArray(dataQuality.missing_expected_parameters) &&
+                  dataQuality.missing_expected_parameters.length > 0
+                    ? dataQuality.missing_expected_parameters.join(", ")
+                    : "None"}
+                </strong>
+              </div>
+            </div>
+          ) : (
+            <p className="empty-state">No data quality report available.</p>
+          )}
+        </div>
+      </section>
+      <section className="analytics-section">
+        <div className="panel">
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Pipeline Monitoring</p>
+              <h2>Latest Pipeline Run</h2>
+            </div>
+          </div>
+
+          {pipelineRun && pipelineRun.run_id ? (
+            <div className="quality-grid">
+              <div className="quality-item">
+                <span>Status</span>
+                <strong>{pipelineRun.status}</strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Run ID</span>
+                <strong>{pipelineRun.run_id}</strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Started At</span>
+                <strong>{pipelineRun.started_at}</strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Duration</span>
+                <strong>
+                  {pipelineRun.duration_seconds !== null &&
+                  pipelineRun.duration_seconds !== undefined
+                    ? `${pipelineRun.duration_seconds}s`
+                    : "N/A"}
+                </strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Raw Rows</span>
+                <strong>{pipelineRun.raw_rows ?? "N/A"}</strong>
+              </div>
+
+              <div className="quality-item">
+                <span>Processed Rows</span>
+                <strong>{pipelineRun.processed_rows ?? "N/A"}</strong>
+              </div>
+            </div>
+          ) : (
+            <p className="empty-state">
+              No pipeline run found yet. Run the pipeline first.
+            </p>
+          )}
         </div>
       </section>
       <section className="analytics-section">

@@ -220,3 +220,7 @@ _SUCCESS
 # Frontend dependencies/build
 frontend/node_modules/
 frontend/dist/
+
+# Generated pipeline logs
+data/pipeline_logs/*.json
+!data/pipeline_logs/.gitkeep

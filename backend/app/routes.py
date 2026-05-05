@@ -16,6 +16,7 @@ from models.prediction_service import predict_next_value
 from app.utils import get_dataset_path
 from models.model_info_service import get_model_info
 from analytics.data_quality_service import get_data_quality_report
+from analytics.pipeline_service import get_pipeline_runs, get_latest_pipeline_run
 
 api_bp = Blueprint("api", __name__)
 
@@ -222,3 +223,13 @@ def alerts():
         return jsonify(result), 404
 
     return jsonify(result)
+
+
+@api_bp.route("/api/pipeline/runs", methods=["GET"])
+def pipeline_runs():
+    return jsonify(get_pipeline_runs())
+
+
+@api_bp.route("/api/pipeline/latest", methods=["GET"])
+def latest_pipeline_run():
+    return jsonify(get_latest_pipeline_run())
