@@ -68,3 +68,11 @@ export async function getMonthlyAverage(city, parameter) {
 
   return response.data;
 }
+
+export async function getAlerts(city, parameter) {
+  const response = await axios.get(`${API_BASE_URL}/api/alerts`, {
+    params: { city, parameter },
+  });
+
+  return response.data;
+}

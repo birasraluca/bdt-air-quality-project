@@ -10,10 +10,12 @@ from analytics.data_service import (
     get_descriptive_statistics,
     get_city_profile,
     get_monthly_average,
+    get_pollution_alerts,
 )
 from models.prediction_service import predict_next_value
 from app.utils import get_dataset_path
 from models.model_info_service import get_model_info
+from analytics.data_quality_service import get_data_quality_report
 
 api_bp = Blueprint("api", __name__)
 
@@ -192,6 +194,29 @@ def monthly_average():
     parameter = request.args.get("parameter")
 
     result = get_monthly_average(city, parameter)
+
+    if "error" in result:
+        return jsonify(result), 404
+
+    return jsonify(result)
+
+
+@api_bp.route("/api/data-quality", methods=["GET"])
+def data_quality():
+    return jsonify(get_data_quality_report())
+
+
+@api_bp.route("/api/alerts", methods=["GET"])
+def alerts():
+    city = request.args.get("city")
+    parameter = request.args.get("parameter")
+
+    if not city or not parameter:
+        return jsonify({
+            "error": "Both 'city' and 'parameter' query parameters are required"
+        }), 400
+
+    result = get_pollution_alerts(city, parameter)
 
     if "error" in result:
         return jsonify(result), 404

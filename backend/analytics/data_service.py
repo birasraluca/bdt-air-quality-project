@@ -285,3 +285,58 @@ def get_monthly_average(city: str = None, parameter: str = None):
         "parameter": parameter if parameter else "all",
         "data": data
     }
+
+
+def get_pollution_alerts(city: str, parameter: str):
+    df = load_dataset()
+
+    filtered_df = df[
+        (df["city"].str.lower() == city.lower()) &
+        (df["parameter"].str.lower() == parameter.lower())
+    ].copy()
+
+    if filtered_df.empty:
+        return {
+            "error": f"No data found for city='{city}' and parameter='{parameter}'"
+        }
+
+    filtered_df = filtered_df.sort_values("date")
+
+    mean_value = filtered_df["value"].mean()
+    std_value = filtered_df["value"].std()
+
+    if pd.isna(std_value) or std_value == 0:
+        return {
+            "city": city,
+            "parameter": parameter,
+            "method": "mean + 2 * standard deviation",
+            "threshold": round(float(mean_value), 2),
+            "alerts": []
+        }
+
+    threshold = mean_value + (2 * std_value)
+
+    alert_df = filtered_df[filtered_df["value"] > threshold].copy()
+    alert_df = alert_df.sort_values("value", ascending=False)
+
+    alerts = [
+        {
+            "date": row["date"].strftime("%Y-%m-%d"),
+            "value": round(float(row["value"]), 2),
+            "severity": (
+                "high" if row["value"] <= threshold + std_value else "very high"
+            )
+        }
+        for _, row in alert_df.iterrows()
+    ]
+
+    return {
+        "city": city,
+        "parameter": parameter,
+        "method": "mean + 2 * standard deviation",
+        "mean": round(float(mean_value), 2),
+        "std": round(float(std_value), 2),
+        "threshold": round(float(threshold), 2),
+        "alert_count": int(len(alerts)),
+        "alerts": alerts
+    }

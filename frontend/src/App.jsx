@@ -9,6 +9,7 @@ import {
   getModelInfo,
   getDescriptiveStatistics,
   getMonthlyAverage,
+  getAlerts,
 } from "./api";
 import {
   LineChart,
@@ -41,6 +42,8 @@ function App() {
 
   const [descriptiveStats, setDescriptiveStats] = useState([]);
   const [monthlyAverage, setMonthlyAverage] = useState([]);
+
+  const [alerts, setAlerts] = useState(null);
 
   useEffect(() => {
     async function loadInitialData() {
@@ -92,14 +95,21 @@ function App() {
         setLoading(true);
         setError("");
 
-        const [pollution, trendData, predictionData, statsData, monthlyData] =
-          await Promise.all([
-            getPollution(selectedCity, selectedParameter),
-            getTrend(selectedCity, selectedParameter),
-            getPrediction(selectedCity, selectedParameter),
-            getDescriptiveStatistics(selectedParameter),
-            getMonthlyAverage(selectedCity, selectedParameter),
-          ]);
+        const [
+          pollution,
+          trendData,
+          predictionData,
+          statsData,
+          monthlyData,
+          alertsData,
+        ] = await Promise.all([
+          getPollution(selectedCity, selectedParameter),
+          getTrend(selectedCity, selectedParameter),
+          getPrediction(selectedCity, selectedParameter),
+          getDescriptiveStatistics(selectedParameter),
+          getMonthlyAverage(selectedCity, selectedParameter),
+          getAlerts(selectedCity, selectedParameter),
+        ]);
 
         const normalizedPollutionData = Array.isArray(pollution)
           ? pollution
@@ -110,6 +120,7 @@ function App() {
         setPrediction(predictionData);
         setDescriptiveStats(statsData.statistics || []);
         setMonthlyAverage(monthlyData.data || []);
+        setAlerts(alertsData);
       } catch (err) {
         console.error(err);
         setError("Could not load analytics for the selected city and pollutant.");
@@ -306,9 +317,60 @@ function App() {
                   <strong>Predicted Date:</strong>{" "}
                   {prediction.predicted_date || "N/A"}
                 </p>
+                <p>
+                  <strong>Train/Test Records:</strong>{" "}
+                  {prediction.train_records !== undefined && prediction.test_records !== undefined
+                    ? `${prediction.train_records}/${prediction.test_records}`
+                    : "N/A"}
+                </p>
+
+                <p>
+                  <strong>Baseline MAE:</strong>{" "}
+                  {prediction.baseline?.mae !== undefined
+                    ? Number(prediction.baseline.mae).toFixed(3)
+                    : "N/A"}
+                </p>
+
+                <p>
+                  <strong>Baseline RMSE:</strong>{" "}
+                  {prediction.baseline?.rmse !== undefined
+                    ? Number(prediction.baseline.rmse).toFixed(3)
+                    : "N/A"}
+                </p>
               </div>
             ) : (
               <p className="empty-state">No prediction available.</p>
+            )}
+          </div>
+
+          <div className="panel">
+            <p className="eyebrow">Pollution Alerts</p>
+            <h2>Anomaly Detection</h2>
+
+            {alerts ? (
+              <div className="metric-list">
+                <p>
+                  <strong>Method:</strong> {alerts.method}
+                </p>
+                <p>
+                  <strong>Threshold:</strong>{" "}
+                  {alerts.threshold !== undefined
+                    ? Number(alerts.threshold).toFixed(2)
+                    : "N/A"}
+                </p>
+                <p>
+                  <strong>Alert Days:</strong>{" "}
+                  {alerts.alert_count !== undefined ? alerts.alert_count : "N/A"}
+                </p>
+                <p>
+                  <strong>Highest Alert:</strong>{" "}
+                  {alerts.alerts?.length > 0
+                    ? `${alerts.alerts[0].value} on ${alerts.alerts[0].date}`
+                    : "No alerts"}
+                </p>
+              </div>
+            ) : (
+              <p className="empty-state">No alert data available.</p>
             )}
           </div>
 
