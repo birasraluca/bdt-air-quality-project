@@ -758,3 +758,13 @@ Possible future improvements include:
 This project demonstrates a complete air-quality data platform using Big Data techniques. It includes data ingestion, PySpark-based cleaning and processing, descriptive analytics, anomaly detection, predictive analytics, pipeline monitoring, and frontend visualization.
 
 The project focuses on the velocity dimension of Big Data by implementing a repeatable data pipeline that can ingest, process, analyze, and expose updated air-quality data through an API and dashboard.
+
+<img width="1874" height="770" alt="image" src="https://github.com/user-attachments/assets/2434621f-f8fd-40f5-8485-f45295b4f205" />
+<img width="1854" height="754" alt="image" src="https://github.com/user-attachments/assets/de5030e2-a477-4610-8059-30453777d031" />
+<img width="622" height="598" alt="image" src="https://github.com/user-attachments/assets/0a4ea56f-9fe5-46dd-8db1-74c0b8c093ae" />
+<img width="1848" height="850" alt="image" src="https://github.com/user-attachments/assets/819cd1ce-5888-46b2-85ca-bf85631c35b2" />
+<img width="1844" height="631" alt="image" src="https://github.com/user-attachments/assets/d532694e-d2fc-4012-b91b-ad858defa58f" />
+<img width="1842" height="528" alt="image" src="https://github.com/user-attachments/assets/123e508a-3e27-482c-8b44-f30ca8078a8f" />
+
+
+
