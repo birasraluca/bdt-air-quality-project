@@ -18,7 +18,7 @@ PARAMETERS = {
 ROMANIA_BBOX = "20.0,43.5,30.0,48.5"
 
 START_DATE = datetime(2024, 1, 1)
-DAYS_TO_GENERATE = 365
+DAYS_TO_GENERATE = 854
 
 # Fixed seed for reproducibility.
 # This means the generated dataset is stable across runs.
