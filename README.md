@@ -1,15 +1,5 @@
 # Urban Air Quality Analysis and Prediction Using Big Data Techniques
 
-## Team Members
-
--Biras Raluca
--Campan Dana
--Ivan Teodora
--Longodor Andreea
--Pop Iulian
-
----
-
 ## Project Overview
 
 This project implements an urban air quality data platform focused on the collection, cleaning, analysis, monitoring, and prediction of air pollution data.
