@@ -17,6 +17,8 @@ from pyspark.sql.functions import (
     when,
     lit,
     count,
+    avg,
+    first,
 )
 
 
@@ -123,13 +125,17 @@ def main():
         .otherwise(col("city"))
     )
 
-    # Remove duplicate measurements
-    duplicate_subset = ["city", "parameter", "date"]
-
-    if "location_id" in clean_df.columns:
-        duplicate_subset.append("location_id")
-
-    clean_df = clean_df.dropDuplicates(duplicate_subset)
+    # Aggregate multiple monitoring locations into one city-level daily value.
+    # This removes duplicate city/parameter/date rows while preserving the average signal.
+    clean_df = (
+        clean_df
+        .groupBy("city", "parameter", "date")
+        .agg(
+            avg("value").alias("value"),
+            first("unit", ignorenulls=True).alias("unit"),
+            first("source", ignorenulls=True).alias("source")
+        )
+    )
 
     # Add derived date columns useful for analytics and ML
     clean_df = (
